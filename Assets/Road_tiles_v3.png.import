@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Road_Tiles.png-2ace4e915d580265b0829f1bf2a639da.stex"
+path="res://.import/Road_tiles_v3.png-0f7b8a218c31ae01fd7486c67bbe02b8.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Road_Tiles.png"
-dest_files=[ "res://.import/Road_Tiles.png-2ace4e915d580265b0829f1bf2a639da.stex" ]
+source_file="res://Assets/Road_tiles_v3.png"
+dest_files=[ "res://.import/Road_tiles_v3.png-0f7b8a218c31ae01fd7486c67bbe02b8.stex" ]
 
 [params]
 

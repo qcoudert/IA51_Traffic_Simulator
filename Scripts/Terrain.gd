@@ -119,9 +119,17 @@ func _recalculate_path():
 	# Redraw the lines and circles from the start to the end point
 	update()
 
+func clear_previous_path_drawing():
+	if not _point_path:
+		return
+	var point_start = _point_path[0]
+	var point_end = _point_path[len(_point_path) - 1]
+	set_cell(point_start.x, point_start.y, -1)
+	set_cell(point_end.x, point_end.y, -1)
+
 # Setters for the start and end path values.
 func _set_path_start_position(value):
-	if value in obstacles:
+	if !(value in roads):
 		return
 	if is_outside_map_bounds(value):
 		return
@@ -134,7 +142,7 @@ func _set_path_start_position(value):
 
 
 func _set_path_end_position(value):
-	if value in obstacles:
+	if !(value in roads):
 		return
 	if is_outside_map_bounds(value):
 		return

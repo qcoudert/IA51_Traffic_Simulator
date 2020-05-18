@@ -16,7 +16,6 @@ _global_script_class_icons={
 [application]
 
 config/name="Tiles&Cars"
-run/main_scene="res://TitleScreen/TitleScreen.tscn"
 config/icon="res://icon.png"
 
 [rendering]

@@ -36,6 +36,6 @@ margin_bottom = 306.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Play" type="Button" parent="Menu/CenterRow/Buttons"]
+[node name="Jouer" type="Button" parent="Menu/CenterRow/Buttons"]
 margin_right = 1120.0
 margin_bottom = 20.0

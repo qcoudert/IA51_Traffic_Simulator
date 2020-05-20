@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/title_screen.png-3c2c8fba4705ef3b0ebc346a3b5cfdb8.stex"
+path="res://.import/Road_tiles_v3.png-fb263848aa2a689e176fe530e84a7cad.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/title_screen.png"
-dest_files=[ "res://.import/title_screen.png-3c2c8fba4705ef3b0ebc346a3b5cfdb8.stex" ]
+source_file="res://Map/Road_tiles_v3.png"
+dest_files=[ "res://.import/Road_tiles_v3.png-fb263848aa2a689e176fe530e84a7cad.stex" ]
 
 [params]
 
@@ -20,7 +20,7 @@ compress/hdr_mode=0
 compress/bptc_ldr=0
 compress/normal_map=0
 flags/repeat=0
-flags/filter=true
+flags/filter=false
 flags/mipmaps=false
 flags/anisotropic=false
 flags/srgb=2

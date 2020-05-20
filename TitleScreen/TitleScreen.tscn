@@ -46,7 +46,7 @@ alignment = 1
 
 [node name="PlayButton" parent="Menu/CenterRow/Buttons" instance=ExtResource( 4 )]
 margin_bottom = 80.0
-scene_to_load = "res://Map.tscn"
+scene_to_load = "res://Map/Map.tscn"
 
 [node name="EditButton" parent="Menu/CenterRow/Buttons" instance=ExtResource( 2 )]
 margin_top = 84.0

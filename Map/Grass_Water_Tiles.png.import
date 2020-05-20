@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Grass_Water_Tiles.png-04767d4a42933a27422e1e7732a3c9be.stex"
+path="res://.import/Grass_Water_Tiles.png-5525cc87010abdc9084234cceac56aa5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Grass_Water_Tiles.png"
-dest_files=[ "res://.import/Grass_Water_Tiles.png-04767d4a42933a27422e1e7732a3c9be.stex" ]
+source_file="res://Map/Grass_Water_Tiles.png"
+dest_files=[ "res://.import/Grass_Water_Tiles.png-5525cc87010abdc9084234cceac56aa5.stex" ]
 
 [params]
 

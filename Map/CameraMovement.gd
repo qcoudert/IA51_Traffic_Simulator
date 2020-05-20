@@ -2,6 +2,7 @@ extends Camera2D
 
 const zoomChange = Vector2(0.1, 0.1)
 const transition_time = 0.20
+const maxZoomOffset = 100
 
 var mousePos = Vector2()
 var screen_size
@@ -17,13 +18,14 @@ func _ready():
 
 func _input(event):
 	if (event is InputEventMouseButton) && (event.is_pressed()):
-		var mouseGlobalPos = get_global_mouse_position()
+		var diffVec = get_global_mouse_position() - self.get_camera_position()
+		if diffVec.length() > maxZoomOffset:
+			diffVec = diffVec.normalized() * maxZoomOffset
+		
 		if event.button_index == BUTTON_WHEEL_UP:
-			zoom_in((mouseGlobalPos - self.get_camera_screen_center()) + self.get_camera_position())
-			print((mouseGlobalPos - self.get_camera_screen_center()))
+			zoom_in(diffVec + self.get_camera_position())
 		elif event.button_index == BUTTON_WHEEL_DOWN:
-			zoom_out((mouseGlobalPos - self.get_camera_screen_center()) + self.get_camera_position())
-			print((mouseGlobalPos - self.get_camera_screen_center()))
+			zoom_out(diffVec + self.get_camera_position())
 
 func _process(delta):
 	

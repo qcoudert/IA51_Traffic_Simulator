@@ -22,7 +22,7 @@ const DRAW_COLOR = Color('#fff')
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var walkable_cells_list = astar_add_walkable_cells(roads)
-	astar_connect_walkable_cells_all(walkable_cells_list)
+	astar_connect_walkable_cells_autotile_coord(walkable_cells_list)
 
 
 # Loops through all cells within the map's bounds and
@@ -119,7 +119,75 @@ func astar_connect_walkable_cells(points_array):
 				if not astar_node.has_point(point_relative_index):
 					continue
 				astar_node.connect_points(point_index, point_relative_index, false)
+
+func astar_connect_walkable_cells_autotile_coord(points_array) -> void:
+	for point in points_array:
+		var autotile_coord : Vector2 = get_cell_autotile_coord(point.x, point.y)
 		
+		if autotile_coord.x == 0 and autotile_coord.y == 0:
+			astar_connect_points(point, Vector2(point.x, point.y + 1))
+		
+		if autotile_coord.x == 1 and autotile_coord.y == 0:
+			astar_connect_points(point, Vector2(point.x - 1, point.y))
+			var autotile_coord2 : Vector2 = get_cell_autotile_coord(point.x, point.y + 1)
+			if autotile_coord2.x == 5 and autotile_coord2.y == 0:
+				astar_connect_points(point, Vector2(point.x, point.y + 1))
+		
+		if autotile_coord.x == 2 and autotile_coord.y == 0:
+			astar_connect_points(point, Vector2(point.x-1, point.y))
+		
+		if autotile_coord.x == 0 and autotile_coord.y == 1:
+			astar_connect_points(point, Vector2(point.x, point.y + 1))
+			var autotile_coord2 : Vector2 = get_cell_autotile_coord(point.x + 1, point.y)
+			if autotile_coord2.x == 3 and autotile_coord2.y == 0:
+				astar_connect_points(point, Vector2(point.x + 1, point.y))
+		
+		#if autotile_coord.x == 1 and autotile_coord.y == 1:
+		#	astar_connect_points(point, Vector2(point.x, point.y - 1))
+		
+		if autotile_coord.x == 2 and autotile_coord.y == 1:
+			astar_connect_points(point, Vector2(point.x, point.y - 1))
+			var autotile_coord2 : Vector2 = get_cell_autotile_coord(point.x - 1, point.y)
+			if autotile_coord2.x == 5 and autotile_coord2.y == 2:
+				astar_connect_points(point, Vector2(point.x - 1, point.y))
+		
+		if autotile_coord.x == 0 and autotile_coord.y == 2:
+			astar_connect_points(point, Vector2(point.x + 1, point.y))
+		
+		if autotile_coord.x == 1 and autotile_coord.y == 2:
+			astar_connect_points(point, Vector2(point.x + 1, point.y))
+			var autotile_coord2 : Vector2 = get_cell_autotile_coord(point.x, point.y - 1)
+			if autotile_coord2.x == 3 and autotile_coord2.y == 2:
+				astar_connect_points(point, Vector2(point.x, point.y - 1))
+		
+		if autotile_coord.x == 2 and autotile_coord.y == 2:
+			astar_connect_points(point, Vector2(point.x, point.y - 1))
+		
+		if autotile_coord.x == 3 and autotile_coord.y == 0:
+			astar_connect_points(point, Vector2(point.x + 1, point.y))
+			astar_connect_points(point, Vector2(point.x, point.y - 1))
+		
+		if autotile_coord.x == 5 and autotile_coord.y == 0:
+			astar_connect_points(point, Vector2(point.x + 1, point.y))
+			astar_connect_points(point, Vector2(point.x, point.y + 1))
+		
+		if autotile_coord.x == 3 and autotile_coord.y == 2:
+			astar_connect_points(point, Vector2(point.x - 1, point.y))
+			astar_connect_points(point, Vector2(point.x, point.y - 1))
+		
+		if autotile_coord.x == 5 and autotile_coord.y == 2:
+			astar_connect_points(point, Vector2(point.x - 1, point.y))
+			astar_connect_points(point, Vector2(point.x, point.y + 1))
+		
+
+func astar_connect_points(point_a, point_b):
+	var point_index = calculate_point_index(point_a)
+	var point_relative_index = calculate_point_index(point_b)
+	if is_outside_map_bounds(point_b):
+		return
+	if not astar_node.has_point(point_relative_index):
+		return
+	astar_node.connect_points(point_index, point_relative_index, false)
 
 func is_outside_map_bounds(point):
 	return point.x < 0 or point.y < 0 or point.x >= map_size.x or point.y >= map_size.y
@@ -165,8 +233,8 @@ func _set_path_start_position(value):
 	if is_outside_map_bounds(value):
 		return
 
-	set_cell(path_start_position.x, path_start_position.y, -1)
-	set_cell(value.x, value.y, 1)
+	#set_cell(path_start_position.x, path_start_position.y, -1)
+	#set_cell(value.x, value.y, 1)
 	path_start_position = value
 	if path_end_position and path_end_position != path_start_position:
 		_recalculate_path()
@@ -178,8 +246,8 @@ func _set_path_end_position(value):
 	if is_outside_map_bounds(value):
 		return
 
-	set_cell(path_start_position.x, path_start_position.y, -1)
-	set_cell(value.x, value.y, 2)
+	#set_cell(path_start_position.x, path_start_position.y, -1)
+	#set_cell(value.x, value.y, 2)
 	path_end_position = value
 	if path_start_position != value:
 		_recalculate_path()

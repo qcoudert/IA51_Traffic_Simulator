@@ -62,6 +62,8 @@ func _process(delta):
 				target_point_world = path[0]
 			else :
 				target_point_world = get_point_right_driving(path[0], path[1])
+#	elif _state == STATES.IDLE and self.linear_velocity.normalized().length() > 0:
+#		self.applied_force = -maxAcceleration * currentDirection.normalized()
 	
 	self.rotation = defaultDirection.angle_to(currentDirection)
 
@@ -73,6 +75,7 @@ func move_to(world_position):
 	self.linear_velocity += steering / MASS
 	position += self.linear_velocity * get_process_delta_time()
 	rotation = self.linear_velocity.angle()
+	currentDirection = self.linear_velocity.normalized()
 	return position.distance_to(world_position) < ARRIVE_DISTANCE
 
 func _input(event):
@@ -96,10 +99,11 @@ func _change_state(new_state):
 	_state = new_state
 	
 func get_point_right_driving(point, point_next):
+	return Vector2(point.x, point.y) 
+	"""
 	var point_direction = DIRECTION.NONE
 	var point_tile = terrain.world_to_map(point)
 	var point_next_tile = terrain.world_to_map(point_next)
-	print("point : " + str(point) + "point_next : " + str(point_next))
 	if point_tile.x - 1 == point_next_tile.x:
 		point_direction = DIRECTION.WEST
 	elif point_tile.x + 1 == point_next_tile.x:
@@ -108,7 +112,7 @@ func get_point_right_driving(point, point_next):
 		point_direction = DIRECTION.NORTH
 	elif point_tile.y + 1 == point_next_tile.y:
 		point_direction = DIRECTION.SOUTH
-	print("DIRECTION : " + str(DIRECTION.SOUTH) + " ; actual : " + str(point_direction))
+		
 	var autotile_coord = terrain.get_cell_autotile_coord(point_tile.x, point_tile.y)
 	if point_direction == DIRECTION.SOUTH:
 		if autotile_coord.x == 2 and autotile_coord.y == 1:
@@ -123,3 +127,4 @@ func get_point_right_driving(point, point_next):
 		if autotile_coord.x == 1 and autotile_coord.y == 0:
 			return terrain.map_to_world(Vector2(point_tile.x, point_tile.y + 1))
 	return Vector2(point.x, point.y)
+	"""

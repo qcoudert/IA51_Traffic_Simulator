@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-enum STATES { IDLE, FOLLOW }
+enum STATES { IDLE, FOLLOW}
 enum DIRECTION {NONE, NORTH, SOUTH, WEST, EAST}
 var _state = null
 var path = []
@@ -9,6 +9,8 @@ var target_position = Vector2()
 
 onready var terrain = get_parent().get_node('Terrain')
 
+
+export var distanceArrive = 10.0 #distance à partir du quel on considère qu'on doit passé au point astar suivant
 export var maxSpeed = 100
 export var maxAcceleration = 100
 export var angleSpeed = 0.1
@@ -16,10 +18,12 @@ export var angleSpeed = 0.1
 const defaultDirection = Vector2(-1, 0)
 
 var currentDirection
+var currentMaxSpeed;
 
 func _ready():
 	$AnimatedSprite.play("default")
 	currentDirection = defaultDirection
+	currentMaxSpeed = maxSpeed
 	_change_state(STATES.IDLE)
 
 func _process(delta):
@@ -56,27 +60,31 @@ func _process(delta):
 		if arrived_to_next_point:
 			path.remove(0)
 			if len(path) == 0:
+				currentMaxSpeed = 0
 				_change_state(STATES.IDLE)
 				return
 			elif len(path) == 1:
+				currentMaxSpeed = maxSpeed/2
 				target_point_world = path[0]
 			else :
+				currentMaxSpeed = maxSpeed
 				target_point_world = get_point_right_driving(path[0], path[1])
-#	elif _state == STATES.IDLE and self.linear_velocity.normalized().length() > 0:
-#		self.applied_force = -maxAcceleration * currentDirection.normalized()
-	
+		currentDirection = self.linear_velocity.normalized()
+	else:
+		var arrived_to_next_point = move_to(target_point_world)
 	self.rotation = defaultDirection.angle_to(currentDirection)
 
+
 func move_to(world_position):
-	var MASS = 10.0
-	var ARRIVE_DISTANCE = 10.0
-	var desired_velocity = (world_position - position).normalized() * maxSpeed
-	var steering = desired_velocity - self.linear_velocity
-	self.linear_velocity += steering / MASS
-	position += self.linear_velocity * get_process_delta_time()
-	rotation = self.linear_velocity.angle()
-	currentDirection = self.linear_velocity.normalized()
-	return position.distance_to(world_position) < ARRIVE_DISTANCE
+	var desired_velocity:Vector2 = (world_position - position).normalized() * currentMaxSpeed
+	print(desired_velocity)
+	var acceleration = Vector2(min(desired_velocity.x, maxAcceleration),min(desired_velocity.y, maxAcceleration))
+	var steering = acceleration - self.linear_velocity
+	self.linear_velocity += steering
+	self.position += self.linear_velocity * get_process_delta_time()
+	self.rotation = self.linear_velocity.angle()
+	
+	return position.distance_to(world_position) < distanceArrive
 
 func _input(event):
 	if event is InputEventMouseButton:

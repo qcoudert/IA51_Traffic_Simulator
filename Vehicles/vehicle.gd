@@ -77,7 +77,6 @@ func _process(delta):
 
 func move_to(world_position):
 	var desired_velocity:Vector2 = (world_position - position).normalized() * currentMaxSpeed
-	print(desired_velocity)
 	var acceleration = Vector2(min(desired_velocity.x, maxAcceleration),min(desired_velocity.y, maxAcceleration))
 	var steering = acceleration - self.linear_velocity
 	self.linear_velocity += steering

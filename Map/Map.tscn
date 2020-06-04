@@ -359,6 +359,18 @@ tile_data = PoolIntArray( 65543, 2, 65537, 65545, 2, 65538, 65550, 2, 65537, 131
 [node name="Vehicle" parent="." instance=ExtResource( 6 )]
 position = Vector2( 80, 24 )
 
+[node name="Vehicle2" parent="." instance=ExtResource( 6 )]
+position = Vector2( 87.8329, 45.4552 )
+
+[node name="Vehicle3" parent="." instance=ExtResource( 6 )]
+position = Vector2( 299.4, 136.605 )
+
+[node name="Vehicle4" parent="." instance=ExtResource( 6 )]
+position = Vector2( 486.015, 236.051 )
+
+[node name="Vehicle5" parent="." instance=ExtResource( 6 )]
+position = Vector2( 632.935, 516.286 )
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 640, 360 )
 current = true

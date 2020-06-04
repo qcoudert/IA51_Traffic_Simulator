@@ -7,6 +7,11 @@ var path = []
 var target_point_world = Vector2()
 var target_position = Vector2()
 
+var bodies_near = []
+
+onready var area = get_node("Area2D")
+
+onready var map = get_parent()
 onready var terrain = get_parent().get_node('Terrain')
 
 
@@ -71,11 +76,28 @@ func _process(delta):
 				target_point_world = get_point_right_driving(path[0], path[1])
 		currentDirection = self.linear_velocity.normalized()
 	else:
-		var arrived_to_next_point = move_to(target_point_world)
+		var arrived_to_next_point = move_to(position)
 	self.rotation = defaultDirection.angle_to(currentDirection)
 
+func update_current_max_speed():
+	if len(path) == 0:
+		currentMaxSpeed = 0
+		return
+	elif len(path) == 1:
+		currentMaxSpeed = maxSpeed/2
+	else :
+		currentMaxSpeed = maxSpeed
+	
+	if(len(bodies_near) == 0):
+		return
+	
+	var body = bodies_near[0]
+	var speedFollow = maxSpeed * exp(get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())-22)
+	currentMaxSpeed = min(speedFollow, maxSpeed)
+	currentMaxSpeed = max(0, currentMaxSpeed)
 
 func move_to(world_position):
+	update_current_max_speed()
 	var desired_velocity:Vector2 = (world_position - position).normalized() * currentMaxSpeed
 	var acceleration = Vector2(min(desired_velocity.x, maxAcceleration),min(desired_velocity.y, maxAcceleration))
 	var steering = acceleration - self.linear_velocity
@@ -104,7 +126,10 @@ func _change_state(new_state):
 		# we don't want the character to move back to it in this example
 		target_point_world = get_point_right_driving(path[0], path[1])
 	_state = new_state
-	
+
+func update_crossroads():
+	map.update_crossroads_by_agent(self)
+
 func get_point_right_driving(point, point_next):
 	return Vector2(point.x, point.y) 
 	"""

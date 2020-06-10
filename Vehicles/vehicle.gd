@@ -78,6 +78,11 @@ func _process(delta):
 	else:
 		var arrived_to_next_point = move_to(position)
 	self.rotation = defaultDirection.angle_to(currentDirection)
+	
+	#
+	for crossroad in get_parent().crossroads:
+		if crossroad.is_in_crossroad(terrain.world_to_map(position).x, terrain.world_to_map(position).y):
+			print(crossroad.get_agents_and_dist())
 
 func update_current_max_speed():
 	if len(path) == 0:
@@ -124,6 +129,7 @@ func _change_state(new_state):
 			return
 		# The index 0 is the starting cell
 		# we don't want the character to move back to it in this example
+		update_crossroads()
 		target_point_world = get_point_right_driving(path[0], path[1])
 	_state = new_state
 

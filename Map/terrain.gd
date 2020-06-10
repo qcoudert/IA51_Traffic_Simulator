@@ -23,6 +23,51 @@ const DRAW_COLOR = Color('#fff')
 func _ready():
 	var walkable_cells_list = astar_add_walkable_cells(roads)
 	astar_connect_walkable_cells_autotile_coord(walkable_cells_list)
+	create_crossroads(walkable_cells_list)
+
+# Create the crossroads
+func create_crossroads(point_array):
+	var crossroads = []
+	var point_used = []
+	for i in range(map_size.x):
+		point_used.append([])
+		for j in range(map_size.y):
+			point_used[i].append(0)
+	for point in point_array:
+		var autotile_coord : Vector2 = get_cell_autotile_coord(point.x, point.y)
+		if autotile_coord.x == 3 and autotile_coord.y == 0:
+			if point_used[point.x][point.y] == 0:
+				point_used[point.x-1][point.y] = 1
+				point_used[point.x][point.y-1] = 1
+				point_used[point.x-1][point.y-1] = 1
+				point_used[point.x][point.y] = 1
+				# CREATE CROSSROAD
+				get_parent().create_crossroads(point.x-1, point.y-1)
+		if autotile_coord.x == 5 and autotile_coord.y == 0:
+			if point_used[point.x][point.y] == 0:
+				point_used[point.x][point.y] = 1
+				point_used[point.x+1][point.y-1] = 1
+				point_used[point.x][point.y-1] = 1
+				point_used[point.x+1][point.y] = 1
+				# CREATE CROSSROAD
+				get_parent().create_crossroads(point.x, point.y-1)
+		if autotile_coord.x == 3 and autotile_coord.y == 2:
+			if point_used[point.x][point.y] == 0:
+				point_used[point.x][point.y] = 1
+				point_used[point.x-1][point.y] = 1
+				point_used[point.x][point.y+1] = 1
+				point_used[point.x-1][point.y+1] = 1
+				# CREATE CROSSROAD
+				get_parent().create_crossroads(point.x-1, point.y)
+		if autotile_coord.x == 5 and autotile_coord.y == 2:
+			if point_used[point.x][point.y] == 0:
+				point_used[point.x][point.y] = 1
+				point_used[point.x+1][point.y] = 1
+				point_used[point.x][point.y+1] = 1
+				point_used[point.x+1][point.y+1] = 1
+				# CREATE CROSSROAD
+				get_parent().create_crossroads(point.x, point.y)
+
 
 
 # Loops through all cells within the map's bounds and

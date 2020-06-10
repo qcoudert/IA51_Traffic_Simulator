@@ -29,21 +29,23 @@ func add_agent(agent):
 	agentsComming.append(agent)
 	
 func get_agents_and_dist():
+	print("oui")
+	print(agentsComming)
 	var agentsWithDist = []
 	var toDelete = []
 	for i in range (0, len(agentsComming)) :
 		var dist = 0
 		var isIn = false
-		for point in agentsComming.get(i).path:
+		for point in agentsComming[i].path:
 			var pointMap = terrain.world_to_map(point)
 			dist = dist + 1
 			if(is_in_crossroad(pointMap.x, pointMap.y)):
 				isIn = true
 				break
 		if isIn == false:
-			toDelete.add(i)
+			toDelete.append(i)
 		else:
-			agentsWithDist.append({dist:agentsComming.get(i)})
+			agentsWithDist.append({dist:agentsComming[i]})
 		
 	toDelete.invert()
 	for i in toDelete:

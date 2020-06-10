@@ -8,6 +8,8 @@ const TRAFFIC_LIGHT_GREEN = 7
 
 var traffic_lights = Array()
 
+var Crossroad = preload("res://Crossroad/Crossroad.tscn") # Will load when parsing the script.
+
 var crossroads = []
 
 # Called when the node enters the scene tree for the first time.
@@ -32,3 +34,11 @@ func init_traffic_lights():
 func update_crossroads_by_agent(agent):
 	for crossroad in crossroads:
 		crossroad.new_path(agent)
+
+func create_crossroads(i, j):
+	var new_crossroad = Crossroad.instance()
+	new_crossroad.startI = i
+	new_crossroad.startJ = j
+	crossroads.append(new_crossroad)
+	call_deferred("add_child", new_crossroad)
+	

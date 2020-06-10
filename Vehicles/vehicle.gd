@@ -82,7 +82,7 @@ func _process(delta):
 	#
 	for crossroad in get_parent().crossroads:
 		if crossroad.is_in_crossroad(terrain.world_to_map(position).x, terrain.world_to_map(position).y):
-			print(crossroad.get_agents_and_dist())
+			var list_agents = crossroad.get_agents_and_dist()
 
 func update_current_max_speed():
 	if len(path) == 0:

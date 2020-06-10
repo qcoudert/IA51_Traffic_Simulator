@@ -29,8 +29,6 @@ func add_agent(agent):
 	agentsComming.append(agent)
 	
 func get_agents_and_dist():
-	print("oui")
-	print(agentsComming)
 	var agentsWithDist = []
 	var toDelete = []
 	for i in range (0, len(agentsComming)) :

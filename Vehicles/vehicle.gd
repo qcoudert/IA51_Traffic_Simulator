@@ -79,7 +79,7 @@ func _process(delta):
 		var arrived_to_next_point = move_to(position)
 	self.rotation = defaultDirection.angle_to(currentDirection)
 	
-	#
+	
 	for crossroad in get_parent().crossroads:
 		if crossroad.is_in_crossroad(terrain.world_to_map(position).x, terrain.world_to_map(position).y):
 			var list_agents = crossroad.get_agents_and_dist()

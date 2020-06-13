@@ -2,6 +2,7 @@ extends Node2D
 
 var directions = ['north', 'south', 'west', 'east']
 var agentsComming = {}
+var signalisations = {}
 var startI
 var startJ
 

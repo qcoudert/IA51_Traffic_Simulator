@@ -26,10 +26,13 @@ func _input(event):
 #func _process(delta):
 #	pass
 
+"""Get the traffic lights in the Props tileMap and init them by finding their orientation and attribute a crossroad to each of them"""
 func init_traffic_lights():
 	var cells_to_init = $Props.get_used_cells_by_id(TRAFFIC_LIGHT_INIT)
 	for cell in cells_to_init:
 		traffic_lights.append(TrafficLight.new(cell, $Props, $Terrain))
+	for cr in crossroads:
+		cr.store_traffic_lights(traffic_lights)
 
 func update_crossroads_by_agent(agent):
 	for crossroad in crossroads:

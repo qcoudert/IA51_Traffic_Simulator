@@ -27,7 +27,6 @@ func _ready():
 
 # Create the crossroads
 func create_crossroads(point_array):
-	var crossroads = []
 	var point_used = []
 	for i in range(map_size.x):
 		point_used.append([])
@@ -72,7 +71,7 @@ func create_crossroads(point_array):
 
 # Loops through all cells within the map's bounds and
 # adds all points of road to the astar_node
-func astar_add_walkable_cells(roads = []):
+func astar_add_walkable_cells(roads):
 	var points_array = []
 	for y in range(map_size.y):
 		for x in range(map_size.x):

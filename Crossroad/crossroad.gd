@@ -2,7 +2,7 @@ extends Node2D
 
 var directions = ['north', 'south', 'west', 'east']
 var agentsComming = {}
-var signalisations = {}
+var signalisations = []
 var startI
 var startJ
 
@@ -20,7 +20,26 @@ func is_in_crossroad(i, j):
 	if i == startI or i == startI+1:
 		if j == startJ or j == startJ+1:
 			return true
+	return false
 
+func is_in_crossroad_vector(position : Vector2):
+	if position.x == startI or position.x == startI+1:
+		if position.y == startJ or position.y == startJ+1:
+			return true
+	return false
+
+func is_traffic_light_in_crossroad(position : Vector2):
+	if(position.x == startI and position.y == startJ-1):
+		return true
+	elif(position.x == startI+2 and position.y == startJ):
+		return true
+	elif(position.x == startI+1 and position.y == startJ+2):
+		return true
+	elif(position.x == startI-1 and position.y == startJ+1):
+		return true
+	else:
+		return false
+	
 func new_path(agent):
 	var add = false
 	var comingFrom = ''
@@ -75,3 +94,7 @@ func get_agents_and_dist():
 			agentsComming[direction].remove(i)
 	return agentsWithDist
 
+func store_traffic_lights(traffic_lights):
+	for tl in traffic_lights:
+		if(is_traffic_light_in_crossroad(tl.position)):
+			signalisations.append(tl)

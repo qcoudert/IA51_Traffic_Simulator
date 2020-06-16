@@ -418,5 +418,6 @@ y_limit = 25
 [node name="Tween" type="Tween" parent="Camera2D"]
 
 [node name="TrafficLightTimer" type="Timer" parent="."]
+wait_time = 30.0
 autostart = true
 [connection signal="timeout" from="TrafficLightTimer" to="." method="_on_TrafficLightTimer_timeout"]

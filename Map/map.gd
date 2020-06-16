@@ -22,10 +22,6 @@ func _input(event):
 # warning-ignore:return_value_discarded
 		get_tree().change_scene("res://TitleScreen/TitleScreen.tscn")
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
-
 """Get the traffic lights in the Props tileMap and init them by finding their orientation and attribute a crossroad to each of them"""
 func init_traffic_lights():
 	var cells_to_init = $Props.get_used_cells_by_id(TRAFFIC_LIGHT_INIT)
@@ -45,3 +41,12 @@ func create_crossroads(i, j):
 	crossroads.append(new_crossroad)
 	call_deferred("add_child", new_crossroad)
 	
+
+
+func _on_TrafficLightTimer_timeout():
+	for tl in traffic_lights:
+		if (tl.current_state == TRAFFIC_LIGHT_GREEN):
+			tl.current_state = TRAFFIC_LIGHT_RED
+		else:
+			tl.current_state = TRAFFIC_LIGHT_GREEN
+		tl.refreshTile()

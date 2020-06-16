@@ -2,7 +2,7 @@ extends Node2D
 
 var directions = ['north', 'south', 'west', 'east']
 var agentsComming = {}
-var signalisations = []
+var signalisations = {}
 var startI
 var startJ
 
@@ -30,13 +30,13 @@ func is_in_crossroad_vector(position : Vector2):
 
 func is_traffic_light_in_crossroad(position : Vector2):
 	if(position.x == startI and position.y == startJ-1):
-		return true
+		return "north"
 	elif(position.x == startI+2 and position.y == startJ):
-		return true
+		return "east"
 	elif(position.x == startI+1 and position.y == startJ+2):
-		return true
+		return "south"
 	elif(position.x == startI-1 and position.y == startJ+1):
-		return true
+		return "west"
 	else:
 		return false
 	
@@ -97,4 +97,16 @@ func get_agents_and_dist():
 func store_traffic_lights(traffic_lights):
 	for tl in traffic_lights:
 		if(is_traffic_light_in_crossroad(tl.position)):
-			signalisations.append(tl)
+			signalisations[is_traffic_light_in_crossroad(tl.position)] = tl
+	if(!signalisations.empty()):
+		_init_traffic_lights_state()
+
+func _init_traffic_lights_state():
+	signalisations["north"].current_state = TrafficLight.TRAFFIC_LIGHT_RED
+	signalisations["south"].current_state = TrafficLight.TRAFFIC_LIGHT_RED
+	signalisations["east"].current_state = TrafficLight.TRAFFIC_LIGHT_GREEN
+	signalisations["west"].current_state = TrafficLight.TRAFFIC_LIGHT_GREEN
+	signalisations["north"].refreshTile()
+	signalisations["south"].refreshTile()
+	signalisations["east"].refreshTile()
+	signalisations["west"].refreshTile()

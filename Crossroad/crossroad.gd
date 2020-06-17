@@ -6,7 +6,6 @@ var agentsComming = {}
 var signalisations = {}
 var startI
 var startJ
-
 onready var terrain = get_parent().get_node('Terrain')
 
 # Called when the node enters the scene tree for the first time.
@@ -65,14 +64,26 @@ func coming_from(i, j):
 		return 'west'
 	elif i == startI + 1 and j == startJ + 1:
 		return 'south'
-	
+
 
 func add_agent(agent, comingFrom):
+	agent.add_next_crossroad(self)
 	agentsComming[comingFrom].append(agent)
 
 func remove_agent(agent, comingFrom):
+	agent.remove_next_crossroad(self)
 	agentsComming[comingFrom].erase(agent)
 
+func get_dist_to_crossroad(agent):
+	var direction = get_agent_direction(agent)
+	if direction == 'north':
+		return Vector2(terrain.map_to_world(Vector2(startI+0.5, startJ+0.5))).distance_to(agent.get_global_transform().get_origin())
+	if direction == 'east':
+		return Vector2(terrain.map_to_world(Vector2(startI+1+0.5, startJ+0.5))).distance_to(agent.get_global_transform().get_origin())
+	if direction == 'west':
+		return Vector2(terrain.map_to_world(Vector2(startI+0.5, startJ+1+0.5))).distance_to(agent.get_global_transform().get_origin())
+	if direction == 'south':
+		return Vector2(terrain.map_to_world(Vector2(startI+1+0.5, startJ+1+0.5))).distance_to(agent.get_global_transform().get_origin())
 
 # This return the arrays of all agents which are coming to the crossroads 
 # with the distance they are from. 
@@ -81,39 +92,38 @@ func get_agents_and_dist():
 	var agentsWithDist = {}
 	for direction in directions:
 		agentsWithDist[direction] = []
-		var toDelete = []
 		for i in range (0, len(agentsComming[direction])) :
-			var dist = 0
+			var dist = get_dist_to_crossroad(agentsComming[direction][i])
 			var isIn = false
 			for point in agentsComming[direction][i].path:
 				var pointMap = terrain.world_to_map(point)
-				dist = dist + 1
+				#dist = dist + 1
 				if(is_in_crossroad(pointMap.x, pointMap.y)):
 					isIn = true
 					break
-			if isIn == false:
-				toDelete.append(i)
-			else:
-				agentsWithDist[direction].append({agentsComming[direction][i] : dist})
-		
-		toDelete.invert()
-		#for i in toDelete:
-		#	agentsComming[direction].remove(i)
+			if isIn == true:
+				agentsWithDist[direction].append({'agent':agentsComming[direction][i], 'dist':dist})
 	return agentsWithDist
+
+func get_agent_direction(agent):
+	for d in directions:
+		if agent in agentsComming[d]:
+			return d
+	return false
 
 func store_traffic_lights(traffic_lights):
 	for tl in traffic_lights:
 		if(is_traffic_light_in_crossroad(tl.position)):
-			signalisations[is_traffic_light_in_crossroad(tl.position)] = tl
+			signalisations[is_traffic_light_in_crossroad(tl.position)] = {'signalisation':'trafic_light', 'object':tl}
 	if(!signalisations.empty()):
 		_init_traffic_lights_state()
 
 func _init_traffic_lights_state():
-	signalisations["north"].current_state = TrafficLight.TRAFFIC_LIGHT_RED
-	signalisations["south"].current_state = TrafficLight.TRAFFIC_LIGHT_RED
-	signalisations["east"].current_state = TrafficLight.TRAFFIC_LIGHT_GREEN
-	signalisations["west"].current_state = TrafficLight.TRAFFIC_LIGHT_GREEN
-	signalisations["north"].refreshTile()
-	signalisations["south"].refreshTile()
-	signalisations["east"].refreshTile()
-	signalisations["west"].refreshTile()
+	signalisations["north"]['object'].current_state = TrafficLight.TRAFFIC_LIGHT_RED
+	signalisations["south"]['object'].current_state = TrafficLight.TRAFFIC_LIGHT_RED
+	signalisations["east"]['object'].current_state = TrafficLight.TRAFFIC_LIGHT_GREEN
+	signalisations["west"]['object'].current_state = TrafficLight.TRAFFIC_LIGHT_GREEN
+	signalisations["north"]['object'].refreshTile()
+	signalisations["south"]['object'].refreshTile()
+	signalisations["east"]['object'].refreshTile()
+	signalisations["west"]['object'].refreshTile()

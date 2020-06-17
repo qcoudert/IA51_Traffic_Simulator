@@ -21,7 +21,7 @@ const DRAW_COLOR = Color('#fff')
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var walkable_cells_list = astar_add_walkable_cells(roads)
+	var walkable_cells_list = astar_add_walkable_cells()
 	astar_connect_walkable_cells_autotile_coord(walkable_cells_list)
 	create_crossroads(walkable_cells_list)
 
@@ -71,7 +71,7 @@ func create_crossroads(point_array):
 
 # Loops through all cells within the map's bounds and
 # adds all points of road to the astar_node
-func astar_add_walkable_cells(roads):
+func astar_add_walkable_cells():
 	var points_array = []
 	for y in range(map_size.y):
 		for x in range(map_size.x):

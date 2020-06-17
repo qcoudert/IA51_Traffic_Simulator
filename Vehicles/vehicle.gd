@@ -134,7 +134,8 @@ func _change_state(new_state):
 	_state = new_state
 
 func update_crossroads():
-	map.update_crossroads_by_agent(self)
+	var nothing
+	#map.update_crossroads_by_agent(self)
 
 func get_point_right_driving(point, point_next):
 	return Vector2(point.x, point.y) 

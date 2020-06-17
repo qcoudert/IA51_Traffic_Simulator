@@ -1,6 +1,7 @@
 extends Node2D
 
 var directions = ['north', 'south', 'west', 'east']
+var bodies_in = []
 var agentsComming = {}
 var signalisations = {}
 var startI
@@ -14,7 +15,9 @@ func _ready():
 	agentsComming.west = []
 	agentsComming.east = []
 	agentsComming.south = []
+	global_position = terrain.map_to_world(Vector2(startI, startJ))
 	pass # Replace with function body.
+
 
 func is_in_crossroad(i, j):
 	if i == startI or i == startI+1:
@@ -67,6 +70,10 @@ func coming_from(i, j):
 func add_agent(agent, comingFrom):
 	agentsComming[comingFrom].append(agent)
 
+func remove_agent(agent, comingFrom):
+	agentsComming[comingFrom].erase(agent)
+
+
 # This return the arrays of all agents which are coming to the crossroads 
 # with the distance they are from. 
 # Arrays are put in a dictionnary by the directions they come from.
@@ -90,8 +97,8 @@ func get_agents_and_dist():
 				agentsWithDist[direction].append({agentsComming[direction][i] : dist})
 		
 		toDelete.invert()
-		for i in toDelete:
-			agentsComming[direction].remove(i)
+		#for i in toDelete:
+		#	agentsComming[direction].remove(i)
 	return agentsWithDist
 
 func store_traffic_lights(traffic_lights):

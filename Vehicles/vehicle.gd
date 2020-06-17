@@ -125,8 +125,7 @@ func update_current_speed(delta):
 	else :
 		currentMaxSpeed = maxSpeed
 	
-	if(len(bodies_near) == 0):
-		return
+	
 	var speedFollow = maxSpeed
 	for body in bodies_near:
 		speedFollow = min(speedFollow, maxSpeed * exp(get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())-22))

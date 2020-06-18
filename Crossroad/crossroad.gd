@@ -41,7 +41,7 @@ func is_traffic_light_in_crossroad(position : Vector2):
 		return "west"
 	else:
 		return false
-	
+
 func new_path(agent):
 	var add = false
 	var comingFrom = ''

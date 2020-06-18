@@ -34,6 +34,9 @@ var currentDirection
 var currentMaxSpeed
 var currentSpeed = 0
 
+var stop_timer = 0
+const STOP_TIME = 2
+
 var next_crossroads = []
 
 signal vehicle_finished_path(vehicle)
@@ -46,18 +49,6 @@ func _ready():
 	connect("vehicle_finished_path", get_parent(), "_on_Vehicle_vehicle_finished_path")
 
 func _process(delta):
-	#Ce bloc permet de contrôler l'accélération du véhicule sur les touches de direction
-	"""	var vel = Vector2()
-	if Input.is_action_pressed("ui_up"):
-		vel.y = -maxAcceleration
-	if Input.is_action_pressed("ui_down"):
-		vel.y = maxAcceleration
-	if Input.is_action_pressed("ui_left"):
-		vel.x = -maxAcceleration
-	if Input.is_action_pressed("ui_right"):
-		vel.x = maxAcceleration
-		
-	self.applied_force = vel"""
 	
 	#Ce bloc permet de gérer un véhicule en utilisant les touches avant et arrière comme accélération/décélération
 	#et les touches gauches et droites pour tourner le véhicule
@@ -94,9 +85,6 @@ func _process(delta):
 		var arrived_to_next_point = move_to(delta, position)
 	#self.rotation = defaultDirection.angle_to(currentDirection)
 	
-	#for crossroad in get_parent().crossroads:
-	#	if crossroad.is_in_crossroad(terrain.world_to_map(position).x, terrain.world_to_map(position).y):
-	#		var list_agents = crossroad.get_agents_and_dist()
 
 func calc_acc(self_velocity, other_velocity, safe_dist, dist):
 	if dist == 0:
@@ -125,15 +113,6 @@ func update_current_speed(delta):
 		else :
 			dist_in_path += path[i].distance_to(position)
 	currentMaxSpeed = min(maxSpeed, calc_acc(currentSpeed, 0, 0, dist_in_path) * delta + currentSpeed)
-	"""
-	if len(path) == 0:
-		currentMaxSpeed = 0
-		return
-	elif len(path) == 1:
-		currentMaxSpeed = maxSpeed/2
-	else :
-		currentMaxSpeed = maxSpeed
-	"""
 	
 	var speedFollow = maxSpeed
 	for body in bodies_near:
@@ -141,12 +120,12 @@ func update_current_speed(delta):
 		speedFollow = min(speedFollow, calc_acc(speedFollow, body.currentSpeed, 15, dist_to_body) * delta + currentSpeed)
 		#speedFollow = min(speedFollow, maxSpeed * exp(get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())-22))
 	currentMaxSpeed = min(speedFollow, currentMaxSpeed)
-	currentMaxSpeed = min(currentMaxSpeed, get_crossroad_max_speed(delta, currentMaxSpeed))
+	currentMaxSpeed = min(currentMaxSpeed, get_crossroad_max_speed(delta))
 	currentMaxSpeed = min(currentMaxSpeed, maxSpeed)
 	currentMaxSpeed = max(0, currentMaxSpeed)
 	currentSpeed = currentMaxSpeed
 
-func get_crossroad_max_speed(delta, currentMaxSpeed):
+func get_crossroad_max_speed(delta):
 	if next_crossroads.empty():
 		return maxSpeed
 	var next_crossroad
@@ -157,19 +136,21 @@ func get_crossroad_max_speed(delta, currentMaxSpeed):
 		if dist < next_crossroad_dist:
 			next_crossroad_dist = dist
 			next_crossroad = crossroad
-	if can_pass_crossroad(next_crossroad) :
+	if can_pass_crossroad(next_crossroad, delta) :
 		return maxSpeed
 	else :
 		return calc_acc(currentSpeed, 0, 15, next_crossroad_dist) * delta + currentSpeed
 
-func can_pass_crossroad(crossroad):
+func can_pass_crossroad(crossroad, delta):
 	var agent_dir = crossroad.get_agent_direction(self)
 	var agents_and_dist = crossroad.get_agents_and_dist()
 	if crossroad.bodies_in.has(self): # Si l'agent est engagé, on trace
 		return true
 	if !(crossroad.bodies_in.empty()): # Si quelqu'un est engagé on s'arrête
 		return false
-	
+	if crossroad.signalisations[agent_dir]['signalisation'] == 'stop':
+		if stop_timer <= STOP_TIME:
+			stop_timer += delta
 	
 	return right_priority(agent_dir, agents_and_dist)
 	#Sinon, on test si on peut s'engager
@@ -227,31 +208,3 @@ func update_crossroads():
 
 func get_point_right_driving(point, point_next):
 	return Vector2(point.x, point.y) 
-	"""
-	var point_direction = DIRECTION.NONE
-	var point_tile = terrain.world_to_map(point)
-	var point_next_tile = terrain.world_to_map(point_next)
-	if point_tile.x - 1 == point_next_tile.x:
-		point_direction = DIRECTION.WEST
-	elif point_tile.x + 1 == point_next_tile.x:
-		point_direction = DIRECTION.EAST
-	elif point_tile.y - 1 == point_next_tile.y:
-		point_direction = DIRECTION.NORTH
-	elif point_tile.y + 1 == point_next_tile.y:
-		point_direction = DIRECTION.SOUTH
-		
-	var autotile_coord = terrain.get_cell_autotile_coord(point_tile.x, point_tile.y)
-	if point_direction == DIRECTION.SOUTH:
-		if autotile_coord.x == 2 and autotile_coord.y == 1:
-			return terrain.map_to_world(Vector2(point_tile.x - 1, point_tile.y))
-	if point_direction == DIRECTION.NORTH:
-		if autotile_coord.x == 0 and autotile_coord.y == 1:
-			return terrain.map_to_world(Vector2(point_tile.x + 1, point_tile.y))
-	if point_direction == DIRECTION.WEST:
-		if autotile_coord.x == 1 and autotile_coord.y == 2:
-			return terrain.map_to_world(Vector2(point_tile.x, point_tile.y - 1))
-	if point_direction == DIRECTION.EAST:
-		if autotile_coord.x == 1 and autotile_coord.y == 0:
-			return terrain.map_to_world(Vector2(point_tile.x, point_tile.y + 1))
-	return Vector2(point.x, point.y)
-	"""

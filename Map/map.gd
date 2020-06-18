@@ -1,6 +1,7 @@
 extends Node2D
 
 const ROAD = 0
+const STOP = 1
 const TRAFFIC_LIGHT_INIT = 4
 const TRAFFIC_LIGHT_RED = 5
 const TRAFFIC_LIGHT_ORANGE = 6
@@ -43,6 +44,11 @@ func init_traffic_lights():
 	for cr in crossroads:
 		cr.store_traffic_lights(traffic_lights)
 
+func _init_stops():
+	var cells_to_init = $Props.get_used_cells_by_id(STOP)
+	for cr in crossroads:
+		cr.store_stops(cells_to_init)
+
 func update_crossroads_by_agent(agent):
 	for crossroad in crossroads:
 		crossroad.new_path(agent)
@@ -53,7 +59,6 @@ func create_crossroads(i, j):
 	new_crossroad.startJ = j
 	crossroads.append(new_crossroad)
 	call_deferred("add_child", new_crossroad)
-	
 
 
 func _on_TrafficLightTimer_timeout():

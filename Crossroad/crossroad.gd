@@ -127,3 +127,8 @@ func _init_traffic_lights_state():
 	signalisations["south"]['object'].refreshTile()
 	signalisations["east"]['object'].refreshTile()
 	signalisations["west"]['object'].refreshTile()
+
+func store_stops(stops):
+	for s in stops:
+		if(is_traffic_light_in_crossroad(s)):
+			signalisations[is_traffic_light_in_crossroad(s)] = {'signalisation':'stop'}

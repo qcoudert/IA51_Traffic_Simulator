@@ -26,6 +26,8 @@ func _input(event):
 			zoom_in(diffVec + self.get_camera_position())
 		elif event.button_index == BUTTON_WHEEL_DOWN:
 			zoom_out(diffVec + self.get_camera_position())
+	elif (event.is_action_pressed("ui_accept")):
+		transition_camera(Vector2.ONE, Vector2(640,360))
 
 func _process(delta):
 	

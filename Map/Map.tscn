@@ -402,7 +402,7 @@ y_limit = 25
 [node name="Tween" type="Tween" parent="Camera2D"]
 
 [node name="TrafficLightTimer" type="Timer" parent="."]
-wait_time = 30.0
+wait_time = 15.0
 autostart = true
 
 [node name="SpawnTimer" type="Timer" parent="."]

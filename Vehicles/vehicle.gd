@@ -151,6 +151,12 @@ func can_pass_crossroad(crossroad, delta):
 		return true
 	if !(crossroad.bodies_in.empty()): # Si quelqu'un est engagé on s'arrête
 		return false
+	if crossroad.signalisations[agent_dir]['signalisation'] == 'trafic_light':
+		if crossroad.signalisations[agent_dir]['object'].current_state == TrafficLight.TRAFFIC_LIGHT_GREEN:
+			return true
+		else:
+			return false
+		
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'stop':
 		if stop_timer <= STOP_TIME:
 			if currentSpeed == 0:

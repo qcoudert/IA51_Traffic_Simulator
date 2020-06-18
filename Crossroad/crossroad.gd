@@ -10,6 +10,7 @@ onready var terrain = get_parent().get_node('Terrain')
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	init_signalisation()
 	agentsComming.north = []
 	agentsComming.west = []
 	agentsComming.east = []
@@ -129,9 +130,12 @@ func _init_traffic_lights_state():
 	signalisations["east"]['object'].refreshTile()
 	signalisations["west"]['object'].refreshTile()
 
-func store_stops(stops):
+func init_signalisation():
 	for dir in directions:
-		signalisations[dir] = {'signalisation':'none'}
+		if !(signalisations.has(dir)):
+			signalisations[dir] = {'signalisation':'none'}
+
+func store_stops(stops):
 	for s in stops:
 		if(is_traffic_light_in_crossroad(s)):
 			signalisations[is_traffic_light_in_crossroad(s)] = {'signalisation':'stop'}

@@ -36,11 +36,14 @@ var currentSpeed = 0
 
 var next_crossroads = []
 
+signal vehicle_finished_path(vehicle)
+
 func _ready():
 	$AnimatedSprite.play("default")
 	currentDirection = defaultDirection
 	currentMaxSpeed = maxSpeed
 	_change_state(STATES.IDLE)
+	connect("vehicle_finished_path", get_parent(), "_on_Vehicle_vehicle_finished_path")
 
 func _process(delta):
 	#Ce bloc permet de contrôler l'accélération du véhicule sur les touches de direction
@@ -78,6 +81,7 @@ func _process(delta):
 			if len(path) == 0:
 				currentSpeed = 0
 				_change_state(STATES.IDLE)
+				self.emit_signal("vehicle_finished_path", self)
 				return
 			elif len(path) == 1:
 				currentSpeed = maxSpeed/2
@@ -95,11 +99,6 @@ func _process(delta):
 	#		var list_agents = crossroad.get_agents_and_dist()
 
 func calc_acc(self_velocity, other_velocity, safe_dist, dist):
-	"""
-	:param bwd: Moveable, The current vehicle
-	:param fwd: Moveable, The vehicle in the forward vehicle
-	:return: acceleration m/s^2
-	"""
 	var delta_v = self_velocity - other_velocity
 	var s = dist
 	var vel = self_velocity
@@ -202,6 +201,10 @@ func _change_state(new_state):
 		update_crossroads()
 		target_point_world = get_point_right_driving(path[0], path[1])
 	_state = new_state
+
+func go_to_position(pos : Vector2):
+	target_position = pos
+	_change_state(STATES.FOLLOW)
 
 func update_crossroads():
 	var nothing

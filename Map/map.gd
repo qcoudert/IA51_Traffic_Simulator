@@ -6,15 +6,24 @@ const TRAFFIC_LIGHT_RED = 5
 const TRAFFIC_LIGHT_ORANGE = 6
 const TRAFFIC_LIGHT_GREEN = 7
 
+const MAX_VEHICLES_NUMBER = 30
+
 var traffic_lights = Array()
 
 var Crossroad = preload("res://Crossroad/Crossroad.tscn") # Will load when parsing the script.
-
 var crossroads = []
 
+var terrain_size = Vector2()
+var car_spawnable_tiles
+
+var Vehicle = preload("res://Vehicles/Vehicle.tscn")
+var vehicles = Array()
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	init_traffic_lights()
+	terrain_size = _get_terrain_map_size()
+	car_spawnable_tiles = _get_car_spawnable_road_tiles()
+	_init_spawn_vehicles()
 	pass # Replace with function body.
 
 func _input(event):
@@ -22,8 +31,11 @@ func _input(event):
 # warning-ignore:return_value_discarded
 		get_tree().change_scene("res://TitleScreen/TitleScreen.tscn")
 
-"""Get the traffic lights in the Props tileMap and init them by finding their orientation and attribute a crossroad to each of them"""
 func init_traffic_lights():
+	"""
+	Get the traffic lights in the Props tileMap and init them by 
+	finding their orientation and attribute a crossroad to each of them
+	"""
 	var cells_to_init = $Props.get_used_cells_by_id(TRAFFIC_LIGHT_INIT)
 	for cell in cells_to_init:
 		traffic_lights.append(TrafficLight.new(cell, $Props, $Terrain))
@@ -50,3 +62,50 @@ func _on_TrafficLightTimer_timeout():
 		else:
 			tl.current_state = TRAFFIC_LIGHT_GREEN
 		tl.refreshTile()
+
+func _get_terrain_map_size():
+	var used_cells = $Terrain.get_used_cells()
+	var map_size = Vector2(0,0)
+	for pos in used_cells:
+		if (pos.x > map_size.x):
+			map_size.x = pos.x
+		if (pos.y > map_size.y):
+			map_size.y = pos.y
+	return map_size
+
+func _get_car_spawnable_road_tiles():
+	"""
+	Get the road tiles at the border of the terrain map where the vehicle can spawn
+	"""
+	var spawnable_tiles = Array()
+	for i in range(self.terrain_size.x + 1):
+		if($Terrain.get_cell(i, self.terrain_size.y) == ROAD):
+			spawnable_tiles.append(Vector2(i, self.terrain_size.y))
+		if($Terrain.get_cell(i, 0) == ROAD):
+			spawnable_tiles.append(Vector2(i, 0))
+	for i in range(1,self.terrain_size.y):
+		if($Terrain.get_cell(self.terrain_size.x, i) == ROAD):
+			spawnable_tiles.append(Vector2(self.terrain_size.x,i))
+		if($Terrain.get_cell(0, i) == ROAD):
+			spawnable_tiles.append(Vector2(0,i))
+	return spawnable_tiles
+
+func _init_spawn_vehicles():
+	_spawn_vehicle()
+	if(vehicles.size() < MAX_VEHICLES_NUMBER):
+		$SpawnTimer.start()
+
+func _spawn_vehicle():
+	var v = Vehicle.instance()
+	var pos = self.car_spawnable_tiles[randi() % self.car_spawnable_tiles.size()]
+	pos = $Terrain.map_to_world(pos)
+	v.position = pos
+	self.add_child(v)
+	self.vehicles.append(v)
+	v.go_to_position($Terrain.map_to_world(self.car_spawnable_tiles[randi() % self.car_spawnable_tiles.size()]))
+
+func _on_Vehicle_vehicle_finished_path(vehicle):
+	vehicles.erase(vehicle)
+	vehicle.hide()
+	vehicle.queue_free()
+	_spawn_vehicle()

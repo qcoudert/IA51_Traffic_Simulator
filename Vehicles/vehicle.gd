@@ -177,7 +177,8 @@ func move_to(delta, world_position):
 	var steering = acceleration - self.linear_velocity
 	self.linear_velocity += steering
 	self.position += self.linear_velocity * get_process_delta_time()
-	self.rotation = self.linear_velocity.angle()
+	if(self.linear_velocity != Vector2.ZERO):
+		self.rotation = self.linear_velocity.angle()
 	
 	return position.distance_to(world_position) < distanceArrive
 
@@ -195,6 +196,7 @@ func _change_state(new_state):
 		path = get_parent().get_node('Terrain')._get_path(position, target_position)
 		if not path or len(path) == 1:
 			_change_state(STATES.IDLE)
+			self.emit_signal("vehicle_finished_path", self)
 			return
 		# The index 0 is the starting cell
 		# we don't want the character to move back to it in this example

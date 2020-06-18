@@ -20,6 +20,7 @@ var Vehicle = preload("res://Vehicles/Vehicle.tscn")
 var vehicles = Array()
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	randomize()
 	init_traffic_lights()
 	terrain_size = _get_terrain_map_size()
 	car_spawnable_tiles = _get_car_spawnable_road_tiles()
@@ -79,14 +80,14 @@ func _get_car_spawnable_road_tiles():
 	"""
 	var spawnable_tiles = Array()
 	for i in range(self.terrain_size.x + 1):
-		if($Terrain.get_cell(i, self.terrain_size.y) == ROAD):
+		if($Terrain.get_cell(i, self.terrain_size.y) == ROAD and $Terrain.get_cell(i+1, self.terrain_size.y) != ROAD):
 			spawnable_tiles.append(Vector2(i, self.terrain_size.y))
-		if($Terrain.get_cell(i, 0) == ROAD):
+		if($Terrain.get_cell(i, 0) == ROAD and $Terrain.get_cell(i-1, 0) != ROAD):
 			spawnable_tiles.append(Vector2(i, 0))
 	for i in range(1,self.terrain_size.y):
-		if($Terrain.get_cell(self.terrain_size.x, i) == ROAD):
+		if($Terrain.get_cell(self.terrain_size.x, i) == ROAD and $Terrain.get_cell(self.terrain_size.x, i+1) != ROAD):
 			spawnable_tiles.append(Vector2(self.terrain_size.x,i))
-		if($Terrain.get_cell(0, i) == ROAD):
+		if($Terrain.get_cell(0, i) == ROAD and $Terrain.get_cell(0, i-1) != ROAD):
 			spawnable_tiles.append(Vector2(0,i))
 	return spawnable_tiles
 

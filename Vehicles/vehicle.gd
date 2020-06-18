@@ -18,6 +18,8 @@ onready var map = get_parent()
 onready var terrain = get_parent().get_node('Terrain')
 
 export var RIGHT_DISTANCE = 48
+export var DIST_TO_STOP = 32
+export var DIST_TO_CAR = 20
 
 export var distanceArrive = 10.0 #distance à partir du quel on considère qu'on doit passé au point astar suivant
 export var maxSpeed = 100
@@ -117,7 +119,7 @@ func update_current_speed(delta):
 	var speedFollow = maxSpeed
 	for body in bodies_near:
 		var dist_to_body = get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())
-		speedFollow = min(speedFollow, calc_acc(speedFollow, body.currentSpeed, 15, dist_to_body) * delta + currentSpeed)
+		speedFollow = min(speedFollow, calc_acc(speedFollow, body.currentSpeed, DIST_TO_CAR, dist_to_body) * delta + currentSpeed)
 		#speedFollow = min(speedFollow, maxSpeed * exp(get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())-22))
 	currentMaxSpeed = min(speedFollow, currentMaxSpeed)
 	currentMaxSpeed = min(currentMaxSpeed, get_crossroad_max_speed(delta))
@@ -139,7 +141,7 @@ func get_crossroad_max_speed(delta):
 	if can_pass_crossroad(next_crossroad, delta) :
 		return maxSpeed
 	else :
-		return calc_acc(currentSpeed, 0, 20, next_crossroad_dist) * delta + currentSpeed
+		return calc_acc(currentSpeed, 0, DIST_TO_STOP, next_crossroad_dist) * delta + currentSpeed
 
 func can_pass_crossroad(crossroad, delta):
 	var agent_dir = crossroad.get_agent_direction(self)

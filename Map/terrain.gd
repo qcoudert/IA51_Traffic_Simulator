@@ -296,6 +296,9 @@ func _set_path_end_position(value):
 	if path_start_position != value:
 		_recalculate_path()
 
+func map_to_world_offset(v):
+	return map_to_world(v) + cell_size/2
+
 """
 func _draw():
 	if not _point_path:

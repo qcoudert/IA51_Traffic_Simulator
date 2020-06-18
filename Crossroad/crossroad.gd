@@ -15,6 +15,7 @@ func _ready():
 	agentsComming.east = []
 	agentsComming.south = []
 	global_position = terrain.map_to_world(Vector2(startI, startJ), true)
+	
 	pass # Replace with function body.
 
 
@@ -77,13 +78,13 @@ func remove_agent(agent, comingFrom):
 func get_dist_to_crossroad(agent):
 	var direction = get_agent_direction(agent)
 	if direction == 'north':
-		return Vector2(terrain.map_to_world(Vector2(startI, startJ))).distance_to(agent.get_global_transform().get_origin())
+		return Vector2(terrain.map_to_world_offset(Vector2(startI, startJ))).distance_to(agent.get_global_transform().get_origin())
 	if direction == 'east':
-		return Vector2(terrain.map_to_world(Vector2(startI+1, startJ))).distance_to(agent.get_global_transform().get_origin())
+		return Vector2(terrain.map_to_world_offset(Vector2(startI+1, startJ))).distance_to(agent.get_global_transform().get_origin())
 	if direction == 'west':
-		return Vector2(terrain.map_to_world(Vector2(startI, startJ+1))).distance_to(agent.get_global_transform().get_origin())
+		return Vector2(terrain.map_to_world_offset(Vector2(startI, startJ+1))).distance_to(agent.get_global_transform().get_origin())
 	if direction == 'south':
-		return Vector2(terrain.map_to_world(Vector2(startI+1, startJ+1))).distance_to(agent.get_global_transform().get_origin())
+		return Vector2(terrain.map_to_world_offset(Vector2(startI+1, startJ+1))).distance_to(agent.get_global_transform().get_origin())
 
 # This return the arrays of all agents which are coming to the crossroads 
 # with the distance they are from. 
@@ -107,7 +108,7 @@ func get_agents_and_dist():
 
 func get_agent_direction(agent):
 	for d in directions:
-		if agent in agentsComming[d]:
+		if agentsComming[d].has(agent):
 			return d
 	return false
 

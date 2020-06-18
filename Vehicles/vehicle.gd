@@ -42,6 +42,7 @@ const STOP_TIME = 1
 
 var next_crossroads = []
 
+var consecutive_speeds = Array()
 signal vehicle_finished_path(vehicle)
 
 func _ready():
@@ -53,21 +54,6 @@ func _ready():
 	dist_min_priority = RIGHT_DISTANCE / agressivity
 
 func _process(delta):
-	
-	#Ce bloc permet de gérer un véhicule en utilisant les touches avant et arrière comme accélération/décélération
-	#et les touches gauches et droites pour tourner le véhicule
-	if Input.is_action_pressed("ui_up"):
-		self.applied_force = maxAcceleration * currentDirection.normalized()
-	elif Input.is_action_pressed("ui_down"):
-		self.applied_force = -maxAcceleration * currentDirection.normalized()
-	else:
-		self.applied_force = Vector2.ZERO
-	if Input.is_action_pressed("ui_left"):
-		currentDirection = currentDirection.rotated(-angleSpeed)
-		self.linear_velocity = self.linear_velocity.rotated(-angleSpeed)
-	if Input.is_action_pressed("ui_right"):
-		currentDirection = currentDirection.rotated(angleSpeed)
-		self.linear_velocity = self.linear_velocity.rotated(angleSpeed)
 	# ASTAR
 	if _state == STATES.FOLLOW:
 		var arrived_to_next_point = move_to(delta, target_point_world)
@@ -194,6 +180,7 @@ func move_to(delta, world_position):
 	var steering = acceleration - self.linear_velocity
 	self.linear_velocity += steering
 	self.position += self.linear_velocity * get_process_delta_time()
+	self.consecutive_speeds.append(currentSpeed)
 	if self.linear_velocity.length() != 0:
 		#self.rotation = self.linear_velocity.angle()
 		self.rotation = defaultDirection.angle_to(linear_velocity)

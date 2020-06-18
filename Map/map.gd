@@ -16,6 +16,7 @@ var crossroads = []
 
 var terrain_size = Vector2()
 var car_spawnable_tiles
+var car_despawnable_tiles
 
 var Vehicle = preload("res://Vehicles/Vehicle.tscn")
 var vehicles = Array()
@@ -25,6 +26,7 @@ func _ready():
 	init_traffic_lights()
 	terrain_size = _get_terrain_map_size()
 	car_spawnable_tiles = _get_car_spawnable_road_tiles()
+	car_despawnable_tiles = _get_car_despawnable_road_tiles()
 	_init_spawn_vehicles()
 	pass # Replace with function body.
 
@@ -102,11 +104,28 @@ func _get_car_spawnable_road_tiles():
 		if($Terrain.get_cell(i, 0) == ROAD and $Terrain.get_cell(i-1, 0) != ROAD):
 			spawnable_tiles.append(Vector2(i, 0))
 	for i in range(1,self.terrain_size.y):
-		if($Terrain.get_cell(self.terrain_size.x, i) == ROAD and $Terrain.get_cell(self.terrain_size.x, i+1) != ROAD):
+		if($Terrain.get_cell(self.terrain_size.x, i) == ROAD and $Terrain.get_cell(self.terrain_size.x, i-1) != ROAD):
 			spawnable_tiles.append(Vector2(self.terrain_size.x,i))
-		if($Terrain.get_cell(0, i) == ROAD and $Terrain.get_cell(0, i-1) != ROAD):
+		if($Terrain.get_cell(0, i) == ROAD and $Terrain.get_cell(0, i+1) != ROAD):
 			spawnable_tiles.append(Vector2(0,i))
 	return spawnable_tiles
+
+func _get_car_despawnable_road_tiles():
+	"""
+	Get the road tiles at the border of the terrain map where the vehicle can despawn (tiles that lead out of the map)
+	"""
+	var despawnable_tiles = Array()
+	for i in range(self.terrain_size.x + 1):
+		if($Terrain.get_cell(i, self.terrain_size.y) == ROAD and $Terrain.get_cell(i-1, self.terrain_size.y) != ROAD):
+			despawnable_tiles.append(Vector2(i, self.terrain_size.y))
+		if($Terrain.get_cell(i, 0) == ROAD and $Terrain.get_cell(i+1, 0) != ROAD):
+			despawnable_tiles.append(Vector2(i, 0))
+	for i in range(1,self.terrain_size.y):
+		if($Terrain.get_cell(self.terrain_size.x, i) == ROAD and $Terrain.get_cell(self.terrain_size.x, i+1) != ROAD):
+			despawnable_tiles.append(Vector2(self.terrain_size.x, i))
+		if($Terrain.get_cell(0, i) == ROAD and $Terrain.get_cell(0, i-1) != ROAD):
+			despawnable_tiles.append(Vector2(0, i))
+	return despawnable_tiles
 
 func _init_spawn_vehicles():
 	_spawn_vehicle()
@@ -120,7 +139,7 @@ func _spawn_vehicle():
 	v.position = pos
 	self.add_child(v)
 	self.vehicles.append(v)
-	v.go_to_position($Terrain.map_to_world(self.car_spawnable_tiles[randi() % self.car_spawnable_tiles.size()]))
+	v.go_to_position($Terrain.map_to_world(self.car_despawnable_tiles[randi() % self.car_spawnable_tiles.size()]))
 
 func _on_Vehicle_vehicle_finished_path(vehicle):
 	vehicles.erase(vehicle)

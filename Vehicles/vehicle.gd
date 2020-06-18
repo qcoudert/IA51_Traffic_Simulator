@@ -3,6 +3,7 @@ extends RigidBody2D
 enum STATES { IDLE, FOLLOW}
 enum DIRECTION {NONE, NORTH, SOUTH, WEST, EAST}
 
+var directions = ['north', 'south', 'west', 'east']
 var right_priority_by_dir = {'south':'east', 'east':'north', 'north':'west', 'west':'south'}
 
 var _state = null
@@ -21,7 +22,7 @@ export var RIGHT_DISTANCE = 48
 export var DIST_TO_STOP = 32
 export var DIST_TO_CAR = 20
 
-export var distanceArrive = 10.0 #distance à partir du quel on considère qu'on doit passé au point astar suivant
+export var distanceArrive = 5.0 #distance à partir du quel on considère qu'on doit passé au point astar suivant
 export var maxSpeed = 100
 export var maxAcceleration = 100
 export var angleSpeed = 0.1
@@ -35,7 +36,7 @@ const defaultDirection = Vector2(-1, 0)
 var currentDirection
 var currentMaxSpeed
 var currentSpeed = 0
-
+var dist_min_priority
 var stop_timer = 0
 const STOP_TIME = 1
 
@@ -49,6 +50,7 @@ func _ready():
 	currentMaxSpeed = maxSpeed
 	_change_state(STATES.IDLE)
 	connect("vehicle_finished_path", get_parent(), "_on_Vehicle_vehicle_finished_path")
+	dist_min_priority = RIGHT_DISTANCE / agressivity
 
 func _process(delta):
 	
@@ -145,6 +147,8 @@ func get_crossroad_max_speed(delta):
 
 func can_pass_crossroad(crossroad, delta):
 	var agent_dir = crossroad.get_agent_direction(self)
+	var other_dir = directions
+	other_dir.erase(agent_dir) 
 	var agents_and_dist = crossroad.get_agents_and_dist()
 	if crossroad.bodies_in.has(self): # Si l'agent est engagé, on trace
 		stop_timer = 0
@@ -158,21 +162,30 @@ func can_pass_crossroad(crossroad, delta):
 			return false
 		
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'stop':
-		if stop_timer <= STOP_TIME:
-			if currentSpeed == 0:
-				stop_timer += delta
-			return false
+		return stop_priority(delta, other_dir, agents_and_dist, crossroad)
 	
-	return right_priority(agent_dir, agents_and_dist)
+	return right_priority(agent_dir, agents_and_dist, crossroad)
 	#Sinon, on test si on peut s'engager
 	
 
-func right_priority(agent_dir, agents_and_dist):
-	var dist_min = RIGHT_DISTANCE / agressivity
-	for agent in agents_and_dist[right_priority_by_dir[agent_dir]]:
-		if agent.dist < dist_min :
+func right_priority(agent_dir, agents_and_dist, crossroad):
+	var right_dir = right_priority_by_dir[agent_dir]
+	for agent in agents_and_dist[right_dir]:
+		if crossroad.signalisations[right_dir]['signalisation'] == 'none' and agent.dist < dist_min_priority :
 			return false
 	return true
+
+func stop_priority(delta, other_dir, agents_and_dist, crossroad):
+	if stop_timer <= STOP_TIME:
+		if currentSpeed == 0:
+			stop_timer += delta
+		return false
+	else :
+		for dir in other_dir:
+			for agent in agents_and_dist[dir]:
+				if crossroad.signalisations[dir]['signalisation'] == 'none' and agent.dist < dist_min_priority :
+					return false
+		return true
 
 func move_to(delta, world_position):
 	update_current_speed(delta)

@@ -35,7 +35,7 @@ var currentMaxSpeed
 var currentSpeed = 0
 
 var stop_timer = 0
-const STOP_TIME = 2
+const STOP_TIME = 1
 
 var next_crossroads = []
 
@@ -139,18 +139,21 @@ func get_crossroad_max_speed(delta):
 	if can_pass_crossroad(next_crossroad, delta) :
 		return maxSpeed
 	else :
-		return calc_acc(currentSpeed, 0, 15, next_crossroad_dist) * delta + currentSpeed
+		return calc_acc(currentSpeed, 0, 20, next_crossroad_dist) * delta + currentSpeed
 
 func can_pass_crossroad(crossroad, delta):
 	var agent_dir = crossroad.get_agent_direction(self)
 	var agents_and_dist = crossroad.get_agents_and_dist()
 	if crossroad.bodies_in.has(self): # Si l'agent est engagé, on trace
+		stop_timer = 0
 		return true
 	if !(crossroad.bodies_in.empty()): # Si quelqu'un est engagé on s'arrête
 		return false
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'stop':
 		if stop_timer <= STOP_TIME:
-			stop_timer += delta
+			if currentSpeed == 0:
+				stop_timer += delta
+			return false
 	
 	return right_priority(agent_dir, agents_and_dist)
 	#Sinon, on test si on peut s'engager

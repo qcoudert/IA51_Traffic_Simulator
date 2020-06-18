@@ -10,11 +10,13 @@ onready var terrain = get_parent().get_node('Terrain')
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	for dir in directions:
+		signalisations[dir] = {'signalisation':'none'}
 	agentsComming.north = []
 	agentsComming.west = []
 	agentsComming.east = []
 	agentsComming.south = []
-	global_position = terrain.map_to_world(Vector2(startI, startJ))
+	global_position = terrain.map_to_world(Vector2(startI, startJ), true)
 	pass # Replace with function body.
 
 

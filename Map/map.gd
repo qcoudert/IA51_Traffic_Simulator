@@ -24,6 +24,7 @@ var vehicles = Array()
 func _ready():
 	randomize()
 	init_traffic_lights()
+	_init_stops()
 	terrain_size = _get_terrain_map_size()
 	car_spawnable_tiles = _get_car_spawnable_road_tiles()
 	car_despawnable_tiles = _get_car_despawnable_road_tiles()

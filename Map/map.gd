@@ -7,7 +7,11 @@ const TRAFFIC_LIGHT_RED = 5
 const TRAFFIC_LIGHT_ORANGE = 6
 const TRAFFIC_LIGHT_GREEN = 7
 
+<<<<<<< HEAD
 const MAX_VEHICLES_NUMBER = 50
+=======
+const MAX_VEHICLES_NUMBER = 20
+>>>>>>> 69f22c103d2fb9ead9d61269faa12990cb1cbd25
 
 var traffic_lights = Array()
 
@@ -17,7 +21,6 @@ var crossroads = []
 var terrain_size = Vector2()
 var car_spawnable_tiles
 var car_despawnable_tiles
-var pool_string_array = PoolStringArray()
 
 var Vehicle = preload("res://Vehicles/Vehicle.tscn")
 var vehicles = Array()
@@ -36,11 +39,6 @@ func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 # warning-ignore:return_value_discarded
 		get_tree().change_scene("res://TitleScreen/TitleScreen.tscn")
-	elif event.is_action_pressed("ui_up"):
-		var file = File.new()
-		file.open('res://vehicle_mean_speed.csv',File.WRITE)
-		file.store_csv_line(pool_string_array)
-		file.close()
 
 func init_traffic_lights():
 	"""
@@ -153,9 +151,6 @@ func _on_Vehicle_vehicle_finished_path(vehicle):
 	var total = 0
 	for speed in vehicle.consecutive_speeds:
 		total += speed
-	print("MOYENNE DE LA VITESSE DU VEHICULE SUR LE TRAJET:")
-	print(float(total)/vehicle.consecutive_speeds.size())
-	pool_string_array.append(float(total)/vehicle.consecutive_speeds.size())
 	vehicle.hide()
 	vehicle.queue_free()
 	_spawn_vehicle()

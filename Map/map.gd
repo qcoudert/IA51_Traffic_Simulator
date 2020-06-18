@@ -7,7 +7,7 @@ const TRAFFIC_LIGHT_RED = 5
 const TRAFFIC_LIGHT_ORANGE = 6
 const TRAFFIC_LIGHT_GREEN = 7
 
-const MAX_VEHICLES_NUMBER = 10
+const MAX_VEHICLES_NUMBER = 50
 
 var traffic_lights = Array()
 

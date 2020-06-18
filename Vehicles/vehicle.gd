@@ -17,7 +17,7 @@ onready var area = get_node("Area2D")
 onready var map = get_parent()
 onready var terrain = get_parent().get_node('Terrain')
 
-export var RIGHT_DISTANCE = 32
+export var RIGHT_DISTANCE = 48
 
 export var distanceArrive = 10.0 #distance à partir du quel on considère qu'on doit passé au point astar suivant
 export var maxSpeed = 100
@@ -92,13 +92,15 @@ func _process(delta):
 		currentDirection = self.linear_velocity.normalized()
 	else:
 		var arrived_to_next_point = move_to(delta, position)
-	self.rotation = defaultDirection.angle_to(currentDirection)
+	#self.rotation = defaultDirection.angle_to(currentDirection)
 	
 	#for crossroad in get_parent().crossroads:
 	#	if crossroad.is_in_crossroad(terrain.world_to_map(position).x, terrain.world_to_map(position).y):
 	#		var list_agents = crossroad.get_agents_and_dist()
 
 func calc_acc(self_velocity, other_velocity, safe_dist, dist):
+	if dist == 0:
+		return 0
 	var delta_v = self_velocity - other_velocity
 	var s = dist
 	var vel = self_velocity
@@ -116,6 +118,14 @@ func remove_next_crossroad(crossroad):
 	next_crossroads.erase(crossroad)
 
 func update_current_speed(delta):
+	var dist_in_path = 0
+	for i in range(path.size()):
+		if i < path.size() - 1:
+			dist_in_path += path[i].distance_to(path[i+1])
+		else :
+			dist_in_path += path[i].distance_to(position)
+	currentMaxSpeed = min(maxSpeed, calc_acc(currentSpeed, 0, 0, dist_in_path) * delta + currentSpeed)
+	"""
 	if len(path) == 0:
 		currentMaxSpeed = 0
 		return
@@ -123,11 +133,13 @@ func update_current_speed(delta):
 		currentMaxSpeed = maxSpeed/2
 	else :
 		currentMaxSpeed = maxSpeed
-	
+	"""
 	
 	var speedFollow = maxSpeed
 	for body in bodies_near:
-		speedFollow = min(speedFollow, maxSpeed * exp(get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())-22))
+		var dist_to_body = get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())
+		speedFollow = min(speedFollow, calc_acc(speedFollow, body.currentSpeed, 15, dist_to_body) * delta + currentSpeed)
+		#speedFollow = min(speedFollow, maxSpeed * exp(get_global_transform().get_origin().distance_to(body.get_global_transform().get_origin())-22))
 	currentMaxSpeed = min(speedFollow, currentMaxSpeed)
 	currentMaxSpeed = min(currentMaxSpeed, get_crossroad_max_speed(delta, currentMaxSpeed))
 	currentMaxSpeed = min(currentMaxSpeed, maxSpeed)
@@ -148,7 +160,7 @@ func get_crossroad_max_speed(delta, currentMaxSpeed):
 	if can_pass_crossroad(next_crossroad) :
 		return maxSpeed
 	else :
-		return calc_acc(currentMaxSpeed, 0, 15, dist) * delta + currentSpeed
+		return calc_acc(currentSpeed, 0, 15, next_crossroad_dist) * delta + currentSpeed
 
 func can_pass_crossroad(crossroad):
 	var agent_dir = crossroad.get_agent_direction(self)
@@ -164,9 +176,9 @@ func can_pass_crossroad(crossroad):
 	
 
 func right_priority(agent_dir, agents_and_dist):
-	var dist_max = RIGHT_DISTANCE / agressivity
+	var dist_min = RIGHT_DISTANCE / agressivity
 	for agent in agents_and_dist[right_priority_by_dir[agent_dir]]:
-		if agent.dist < dist_max :
+		if agent.dist < dist_min :
 			return false
 	return true
 
@@ -177,8 +189,9 @@ func move_to(delta, world_position):
 	var steering = acceleration - self.linear_velocity
 	self.linear_velocity += steering
 	self.position += self.linear_velocity * get_process_delta_time()
-	if(self.linear_velocity != Vector2.ZERO):
-		self.rotation = self.linear_velocity.angle()
+	if self.linear_velocity.length() != 0:
+		#self.rotation = self.linear_velocity.angle()
+		self.rotation = defaultDirection.angle_to(linear_velocity)
 	
 	return position.distance_to(world_position) < distanceArrive
 

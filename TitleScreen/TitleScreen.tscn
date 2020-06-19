@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://TitleScreen/title_screen.png" type="Texture" id=1]
 [ext_resource path="res://TitleScreen/Buttons/EditButton.tscn" type="PackedScene" id=2]
-[ext_resource path="res://TitleScreen/Buttons/OptionsButton.tscn" type="PackedScene" id=3]
 [ext_resource path="res://TitleScreen/Buttons/PlayButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://TitleScreen/Buttons/QuitButton.tscn" type="PackedScene" id=5]
 [ext_resource path="res://ScreenEffect/FadeIn.tscn" type="PackedScene" id=6]
@@ -34,31 +33,27 @@ stretch_mode = 4
 [node name="CenterRow" type="HBoxContainer" parent="Menu"]
 margin_top = 254.0
 margin_right = 1120.0
-margin_bottom = 586.0
+margin_bottom = 560.0
 size_flags_vertical = 3
 
 [node name="Buttons" type="VBoxContainer" parent="Menu/CenterRow"]
 margin_right = 1120.0
-margin_bottom = 332.0
+margin_bottom = 306.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 1
 
 [node name="PlayButton" parent="Menu/CenterRow/Buttons" instance=ExtResource( 4 )]
-margin_bottom = 80.0
-scene_to_load = "res://Map/Map.tscn"
+margin_top = 29.0
+margin_bottom = 109.0
 
 [node name="EditButton" parent="Menu/CenterRow/Buttons" instance=ExtResource( 2 )]
-margin_top = 84.0
-margin_bottom = 164.0
-
-[node name="OptionsButton" parent="Menu/CenterRow/Buttons" instance=ExtResource( 3 )]
-margin_top = 168.0
-margin_bottom = 248.0
+margin_top = 113.0
+margin_bottom = 193.0
 
 [node name="QuitButton" parent="Menu/CenterRow/Buttons" instance=ExtResource( 5 )]
-margin_top = 252.0
-margin_bottom = 332.0
+margin_top = 197.0
+margin_bottom = 277.0
 
 [node name="FadeIn" parent="." instance=ExtResource( 6 )]
 visible = false

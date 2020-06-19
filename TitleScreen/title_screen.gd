@@ -1,17 +1,15 @@
 extends Control
 
-var scene_path_to_load
+var scene_path_to_load = ['res://Map/Map.tscn']
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Menu/CenterRow/Buttons/PlayButton.grab_focus()
-	for button in $Menu/CenterRow/Buttons.get_children():
-		if !("Quit" in button.get_name()):
-			button.connect("pressed", self, "_on_Button_pressed", [button.scene_to_load])
+	var button = $Menu/CenterRow/Buttons/PlayButton
+	button.grab_focus()
+	button.connect("pressed", self, "_on_Button_pressed")
 
 
-func _on_Button_pressed(scene_to_load):
-	scene_path_to_load = scene_to_load
+func _on_Button_pressed():
 	$FadeIn.show()
 	$FadeIn.fade_in()
 

@@ -128,9 +128,9 @@ func get_crossroad_max_speed(delta):
 			next_crossroad_dist = dist
 			next_crossroad = crossroad
 	if can_pass_crossroad(next_crossroad, delta) :
-		return maxSpeed
+		return maxSpeed * 0.60
 	else :
-		return calc_acc(currentSpeed, 0, DIST_TO_STOP, next_crossroad_dist) * delta + currentSpeed
+		return min(calc_acc(currentSpeed, 0, DIST_TO_STOP, next_crossroad_dist) * delta + currentSpeed, maxSpeed * 0.60)
 
 func can_pass_crossroad(crossroad, delta):
 	var agent_dir = crossroad.get_agent_direction(self)
@@ -143,7 +143,9 @@ func can_pass_crossroad(crossroad, delta):
 	if !(crossroad.bodies_in.empty()): # Si quelqu'un est engagé on s'arrête
 		return false
 	if crossroad.is_agent_going_left(self) and !(agents_and_dist[face_priority_by_dir[agent_dir]].empty()):
-		return false
+		if crossroad.signalisations[face_priority_by_dir[agent_dir]]['signalisation'] != 'stop':
+			if !(crossroad.is_agent_going_left(first_agent_in_dir(agents_and_dist, face_priority_by_dir[agent_dir]).agent)) :
+				return false
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'trafic_light':
 		if crossroad.signalisations[agent_dir]['object'].current_state == TrafficLight.TRAFFIC_LIGHT_GREEN:
 			return true
@@ -151,7 +153,9 @@ func can_pass_crossroad(crossroad, delta):
 			return false
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'stop':
 		return stop_priority(delta, other_dir, agents_and_dist, crossroad)
-	
+	# Sinon, si on va à droite on peut passer sinon, priorité à droite
+	if crossroad.is_agent_going_right(self):
+		return true
 	return right_priority(agent_dir, agents_and_dist, crossroad)
 	#Sinon, on test si on peut s'engager
 	

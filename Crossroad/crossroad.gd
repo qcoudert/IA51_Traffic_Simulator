@@ -2,6 +2,7 @@ extends Node2D
 
 var directions = ['north', 'south', 'west', 'east']
 var directions_left = {'north':'east', 'south':'west', 'west':'north', 'east':'south'}
+var directions_right = {'south':'east', 'east':'north', 'north':'west', 'west':'south'}
 var bodies_in = []
 var agentsComming = {}
 var signalisations = {}
@@ -68,6 +69,15 @@ func coming_from(i, j):
 	elif i == startI + 1 and j == startJ + 1:
 		return 'south'
 
+func going_to(i, j):
+	if i == startI + 1 and j == startJ - 1:
+		return 'north'
+	elif i == startI - 1 and j == startJ:
+		return 'east'
+	elif i == startI + 2 and j == startJ + 1:
+		return 'west'
+	elif i == startI and j == startJ + 2:
+		return 'south'
 
 func add_agent(agent, comingFrom):
 	agent.add_next_crossroad(self)
@@ -118,7 +128,15 @@ func is_agent_going_left(agent):
 	var direction_left = directions_left[get_agent_direction(agent)]
 	for point in agent.path:
 		var point_map = terrain.world_to_map(point)
-		if coming_from(point_map.x, point_map.y) == direction_left:
+		if going_to(point_map.x, point_map.y) == direction_left:
+			return true
+	return false
+
+func is_agent_going_right(agent):
+	var direction_left = directions_left[get_agent_direction(agent)]
+	for point in agent.path:
+		var point_map = terrain.world_to_map(point)
+		if going_to(point_map.x, point_map.y) == direction_left:
 			return true
 	return false
 

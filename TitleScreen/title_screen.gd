@@ -1,6 +1,6 @@
 extends Control
 
-var scene_path_to_load = ['res://Map/Map.tscn']
+var scene_path_to_load = 'res://Map/Map.tscn'
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

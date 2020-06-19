@@ -406,6 +406,7 @@ wait_time = 15.0
 autostart = true
 
 [node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 2.0
 one_shot = true
 [connection signal="timeout" from="TrafficLightTimer" to="." method="_on_TrafficLightTimer_timeout"]
 [connection signal="timeout" from="SpawnTimer" to="." method="_init_spawn_vehicles"]

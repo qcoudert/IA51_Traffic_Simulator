@@ -1,6 +1,7 @@
 extends Node2D
 
 var directions = ['north', 'south', 'west', 'east']
+var directions_left = {'north':'east', 'south':'west', 'west':'north', 'east':'south'}
 var bodies_in = []
 var agentsComming = {}
 var signalisations = {}
@@ -111,6 +112,14 @@ func get_agent_direction(agent):
 	for d in directions:
 		if agentsComming[d].has(agent):
 			return d
+	return false
+
+func is_agent_going_left(agent):
+	var direction_left = directions_left[get_agent_direction(agent)]
+	for point in agent.path:
+		var point_map = terrain.world_to_map(point)
+		if coming_from(point_map.x, point_map.y) == direction_left:
+			return true
 	return false
 
 func store_traffic_lights(traffic_lights):

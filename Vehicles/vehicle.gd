@@ -5,6 +5,7 @@ enum DIRECTION {NONE, NORTH, SOUTH, WEST, EAST}
 
 var directions = ['north', 'south', 'west', 'east']
 var right_priority_by_dir = {'south':'east', 'east':'north', 'north':'west', 'west':'south'}
+var face_priority_by_dir = {'south':'north', 'east':'west', 'north':'south', 'west':'east'}
 
 var _state = null
 var path = []
@@ -141,12 +142,13 @@ func can_pass_crossroad(crossroad, delta):
 		return true
 	if !(crossroad.bodies_in.empty()): # Si quelqu'un est engagé on s'arrête
 		return false
+	if crossroad.is_agent_going_left(self) and !(agents_and_dist[face_priority_by_dir[agent_dir]].empty()):
+		return false
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'trafic_light':
 		if crossroad.signalisations[agent_dir]['object'].current_state == TrafficLight.TRAFFIC_LIGHT_GREEN:
 			return true
 		else:
 			return false
-		
 	if crossroad.signalisations[agent_dir]['signalisation'] == 'stop':
 		return stop_priority(delta, other_dir, agents_and_dist, crossroad)
 	
@@ -172,6 +174,16 @@ func stop_priority(delta, other_dir, agents_and_dist, crossroad):
 				if crossroad.signalisations[dir]['signalisation'] == 'none' and agent.dist < dist_min_priority :
 					return false
 		return true
+
+#Return the dictionary {agent, dist} of the first agent in the direction given
+func first_agent_in_dir(agents_and_dist, dir):
+	var first_agent = null
+	for agent in agents_and_dist[dir]:
+		if first_agent == null:
+			first_agent = agent
+		elif agent.dist < first_agent.dist:
+			first_agent = agent
+	return first_agent
 
 func move_to(delta, world_position):
 	update_current_speed(delta)
